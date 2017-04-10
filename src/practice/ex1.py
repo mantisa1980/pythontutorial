@@ -1,3 +1,13 @@
-from lib.foo import bar
+# -*- coding: utf-8 -*-
 
-bar()
+'''
+remove first line and test the result
+'''
+
+'''
+this is a block comment
+'''
+
+# This is a line comment
+
+print "Hello World!嗨嗨世界!"
