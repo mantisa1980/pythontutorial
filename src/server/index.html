@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+  <ul>
+    <li><button type="button" id="create">Create account</button></li>
+    <li><button type="button" id="read">Read account</button></li>
+    <li><button type="button" id="patch">Patch nickname</button></li>
+    <li><button type="button" id="delete">Delete account</button></li>
+  </ul>
+  Account:<input type="text" id="account" value="123"><br>
+  Nickname:<input type="text" id="nickname" value="456"><br>
+
+  <br>
+  <label id="message"></label>
+</body>
+
+<script>
+function callbackDecorator(result){
+  $("#message").html(JSON.stringify(result) + "<br>" + new Date() );
+}
+
+
+$("#create").click(function() {
+  $.ajax({
+    url: "/account",
+    type:"POST",
+    data:JSON.stringify({
+      "account":$("#account").val(),
+      "nickname":$("#nickname").val()
+    }),
+    success: function(result) {
+      callbackDecorator(result);
+    },
+    error: function(request,status,error) {
+      callbackDecorator(error);
+      alert("error");
+    }
+  });
+});
+
+$("#read").click(function() {
+   $.ajax({
+    url: "/account",
+    type:"GET",
+    data:{
+      "account":$("#account").val(),
+    },
+
+    success: function(result) {
+      callbackDecorator(result);
+    },
+    error: function(request,status,error) {
+      callbackDecorator(error);
+      alert("error");
+    }
+  });
+});
+
+$("#patch").click(function() {
+   $.ajax({
+    url: "/account",
+    type:"patch",
+    data:JSON.stringify({
+      "account":$("#account").val(),
+      "nickname":$("#nickname").val()
+    }),
+
+    success: function(result) {
+      callbackDecorator(result);
+    },
+    error: function(request,status,error) {
+      callbackDecorator(error);
+      alert("error");
+    }
+  });
+});
+
+$("#delete").click(function() {
+   $.ajax({
+    url: "/account",
+    type:"DELETE",
+    data:JSON.stringify({
+      "account":$("#account").val(),
+    }),
+
+    success: function(result) {
+      callbackDecorator(result);
+    },
+    error: function(request,status,error) {
+      callbackDecorator(error);
+      alert("error");
+    }
+  });
+});
+
+</script>
+</html>
