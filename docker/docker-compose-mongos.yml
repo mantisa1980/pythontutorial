@@ -1,0 +1,22 @@
+version: '3'
+services:
+  mongos0:
+    image: mongo
+    volumes:
+      - ./:/script:ro
+    tty: true
+    links:
+      - mongo001
+      - mongo002
+      - mongo003
+      - mongo004
+      - mongo005
+      - mongo006
+      - mongo007
+      - mongo008
+    volumes:
+      - ./:/script:ro
+    entrypoint: 
+      - mongos
+      - --configdb
+      - s0cfg/mongo007:27019,mongo008:27019,mongo009:27019

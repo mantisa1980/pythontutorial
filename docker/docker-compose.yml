@@ -1,0 +1,129 @@
+version: '3'
+services:
+  mongo001:
+    image: mongo
+    #ports: 
+    #  - "80:80"
+    #  - "8080:8080"
+    #depends_on:
+    #  - mongo
+    #  - redis
+    links:
+      - mongo002
+      - mongo003
+      - mongo007
+      - mongo008
+      - mongo009
+    tty: true 
+    volumes:
+      - ./:/script:ro
+    entrypoint: 
+      - mongod
+      - --replSet
+      - "s0rs0"
+      - --nojournal
+      - --shardsvr
+##########  issue command ###########
+#rs.initiate({_id:"s0rs0", members:[{_id:0, host:"mongo001:27017"}] } ) # init primary
+#rs.add("mongo002:27017")
+#rs.add("mongo003:27017")
+
+# or just run in container:mongo init_s0rs0.js in non-arbiter nodes
+# or just run from console:docker-compose exec mongo001 mongo /script/init_s0rs0.js (service name != container name)
+# or just run from console:docker-compose exec mongo004 mongo /script/init_s0rs1.js (service name != container name)
+# init config server: docker-compose exec mongo007 mongo --port 27019 /script/init_s0cfg.js
+# init mongos: mongos --configdb s0cfg/mongo007:27019,mongo008:27019,mongo009:27019 --port 27020
+# sh.addShard("s0rs0/mongo001:27017") # just specify one (in this case : mongo001) of the replica member
+# sh.addShard("s0rs1/mongo004:27017")
+
+  mongo002:
+    image: mongo
+    tty: true 
+    volumes:
+      - ./:/script:ro
+    entrypoint: 
+      - mongod
+      - --replSet
+      - "s0rs0"
+      - --nojournal
+      - --shardsvr
+  mongo003:
+    image: mongo
+    tty: true 
+    volumes:
+      - ./:/script:ro
+    entrypoint: 
+      - mongod
+      - --replSet
+      - "s0rs0"
+      - --nojournal
+      - --shardsvr
+  mongo004:
+    image: mongo
+    tty: true 
+    links:
+      - mongo005
+      - mongo006
+      - mongo007
+      - mongo008
+      - mongo009
+    volumes:
+      - ./:/script:ro
+    entrypoint:
+      - mongod
+      - --replSet
+      - "s0rs1"
+      - --nojournal
+      - --shardsvr
+  mongo005:
+    image: mongo
+    volumes:
+      - ./:/script:ro
+    tty: true 
+    entrypoint: 
+      - mongod
+      - --replSet
+      - "s0rs1"
+      - --nojournal
+      - --shardsvr
+  mongo006:
+    image: mongo
+    volumes:
+      - ./:/script:ro
+    tty: true 
+    entrypoint: 
+      - mongod
+      - --replSet
+      - "s0rs1"
+      - --nojournal
+      - --shardsvr
+  mongo007:
+    image: mongo
+    volumes:
+      - ./:/script:ro
+    tty: true 
+    entrypoint: 
+      - mongod
+      - --replSet
+      - "s0cfg"
+      - --configsvr
+  mongo008:
+    image: mongo
+    volumes:
+      - ./:/script:ro
+    tty: true 
+    entrypoint: 
+      - mongod
+      - --replSet
+      - "s0cfg"
+      - --configsvr
+  mongo009:
+    image: mongo
+    volumes:
+      - ./:/script:ro
+    tty: true 
+    entrypoint: 
+      - mongod
+      - --replSet
+      - "s0cfg"
+      - --configsvr
