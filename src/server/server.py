@@ -2,6 +2,7 @@
 # -*- coding: 
 __author__ = "duyhsieh"
 
+import traceback
 import falcon
 import json
 from account_manager import AccountManager
@@ -38,16 +39,20 @@ class AccountHandler(object):
             resp.body = json.dumps({"status":-1, "result":result})
 
     def on_post(self, req, resp):
-        data_stream = req.stream.read()
-        dict_object = json.loads(data_stream)
-        account = dict_object['account']
-        nickname = dict_object['nickname']
+        try:
+            data_stream = req.stream.read()
+            dict_object = json.loads(data_stream)
+            account = dict_object['account']
+            nickname = dict_object['nickname']
 
-        ret, result = self.account_manager.create_account(account, nickname)
-        if ret:
-            resp.body = json.dumps({"status":0,"result":result})
-        else:
-            resp.body = json.dumps({"status":-1,"result":result})
+            ret, result = self.account_manager.create_account(account, nickname)
+            if ret:
+                resp.body = json.dumps({"status":0,"result":result})
+            else:
+                resp.body = json.dumps({"status":-1,"result":result})
+        except:
+            s= "on post error!data={},{}".format(data_stream, traceback.format_exc())
+            print s 
 
     def on_patch(self, req, resp):
         data_stream = req.stream.read()
