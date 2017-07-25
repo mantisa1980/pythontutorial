@@ -4,6 +4,7 @@ from lib.foo import bar
 fix the import path error
 command reference:
 export PYTHONPATH=xxxxx
+export PYTHONPATH=$(pwd)/..
 
 '''
 #import sys
@@ -12,4 +13,3 @@ export PYTHONPATH=xxxxx
 y = bar(123)
 print y
 print "done"
-

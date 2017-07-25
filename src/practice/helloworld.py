@@ -10,4 +10,5 @@ this is a block comment
 
 # This is a line comment
 
-print "Hello World!嗨嗨世界!"
+if __name__ == "__main__":
+    print "Hello World!嗨嗨世界!"

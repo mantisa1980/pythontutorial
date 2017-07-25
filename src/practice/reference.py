@@ -1,9 +1,13 @@
-from lib.foo import bar,qux
-
 '''
 reference practice
 '''
+def bar(i): 
+    i+= 1
+    return i
 
+def qux(x):
+    x.append(999)
+    return x
 
 # immutable objects
 x = 123
@@ -17,3 +21,4 @@ print "x is123? {} , y is 124? {}".format(x is 123, y is 124)
 a = [1,2,3]
 b = qux(a)
 print "a={},b={}".format(a , b)
+
