@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
+# cmd : gunicorn guni:app --bind 0.0.0.0 
+# remove bind to accept connections from only localhost
 
 def app(environ, start_response):
     data = "Hello, World from pid:{}, ppid={}\n".format(os.getpid(), os.getppid())
