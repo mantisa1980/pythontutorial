@@ -26,7 +26,7 @@ class AccountManager(object):
             'counter' : 0
         }
         '''
-        self.mongo = pymongo.MongoClient(host='mongo', port=27017)
+        self.mongo = pymongo.MongoClient(host='127.0.0.1', port=27017)
         self.db = self.mongo['User']
 
         self.col_serial = self.db['SerialNumber']
