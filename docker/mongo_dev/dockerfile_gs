@@ -1,0 +1,8 @@
+FROM mongo AS base1
+#FROM python AS base2
+#RUN MKDIR /mongobin/
+#COPY /usr/bin/mongos /mongobin/
+
+# final stage
+FROM ubuntu
+COPY --from=base1 /usr/bin/mongo* /usr/local/bin/

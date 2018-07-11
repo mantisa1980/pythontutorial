@@ -1,0 +1,16 @@
+version: '3'
+services:
+  mongos0:
+    image: mongo
+    volumes:
+      - ./:/script:ro
+    tty: true
+    volumes:
+      - ./:/script:ro
+    networks:
+      - backend-network
+
+    entrypoint:
+      - mongos
+      - --configdb
+      - cluster1cfg/mongo-001:27019,mongo-002:27019,mongo-003:27019

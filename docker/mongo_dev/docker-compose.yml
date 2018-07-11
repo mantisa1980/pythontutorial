@@ -1,0 +1,167 @@
+version: '3'
+
+## Cluster1 itself is a replica set(replSet=cluster1cfg),
+## which manages other data replica sets (Cluster1Shard1, Cluster1Shard2 ... )
+## 
+## Cluster1Shard1 is replica set -> replSet=cluster1:shard1
+## Cluster1Shard2 is replica set -> replSet=cluster1:shard2
+
+# to remove volume: docker volume rm mongo_dev_host-data
+# to list volumes: docker volume ls
+volumes:
+  host-data:
+  mongo-data-001:
+    driver_opts:
+      device: /tmp/host-data
+  mongo-data-002:
+  mongo-data-003:
+  mongo-data-cluster1-cfgsvr1:
+  mongo-data-cluster1-cfgsvr2:
+  mongo-data-cluster1-cfgsvr3:
+
+  # .. then another 20 common volumes
+
+services:
+  #mongo-data:
+  #  image: ubuntu
+  #  volumes:
+  #    #- /tmp/mongo-data:/data/db:rw
+  #    - ./:/script:ro
+
+  pig-gs-001-test:
+    #image: ubuntu
+    image:  mongo
+    tty: true
+    networks:
+      - backend-network
+    hostname: "pig-gs-001-test"
+
+  pig-mongo-001-test:
+    image: mongo
+    #ports:
+    #  - "17017:27018"
+    tty: true
+    volumes:
+      #- mongo-data-001:/data
+      - ./:/hostdata # mount hostDir:containerDir
+    entrypoint: 
+      - mongod
+      - --shardsvr
+      - --replSet
+      - cluster1:shard1
+      - --nojournal
+      - --dbpath
+      - data
+    networks:
+      - backend-network
+    hostname: "pig-mongo-001-test"
+
+  pig-mongo-002-test:
+    image: mongo
+    tty: true 
+    volumes:
+      #- mongo-data-002:/data
+      - ./:/hostdata
+    entrypoint: 
+      - mongod
+      - --shardsvr
+      - --replSet
+      - cluster1:shard1
+      - --nojournal
+      - --dbpath
+      - data
+    networks:
+      - backend-network
+    hostname: "pig-mongo-002-test"
+
+  pig-mongo-003-test:
+    image: mongo
+    tty: true 
+    volumes:
+      #- mongo-data-003:/data
+      - ./:/hostdata
+    entrypoint: 
+      - mongod
+      - --shardsvr
+      - --replSet
+      - cluster1:shard1
+      - --nojournal
+      - --dbpath
+      - data
+    networks:
+      - backend-network
+    hostname: "pig-mongo-003-test"
+
+  mongo-cluster1-cfgsvr1:
+    image: mongo
+    tty: true
+    volumes:
+      #- mongo-data-cluster1-cfgsvr1:/data
+      - ./:/hostdata
+    entrypoint: 
+      - mongod
+      - --configsvr
+      - --replSet
+      - cluster1cfg
+      - --dbpath
+      - data
+    networks:
+      - backend-network
+    hostname: "mongo-cluster1-cfgsvr1"
+
+  mongo-cluster1-cfgsvr2:
+    image: mongo
+    tty: true
+    volumes:
+      #- mongo-data-cluster1-cfgsvr2:/data
+      - ./:/hostdata
+    entrypoint: 
+      - mongod
+      - --configsvr
+      - --replSet
+      - cluster1cfg
+      - --dbpath
+      - data
+    networks:
+      - backend-network
+    hostname: "mongo-cluster1-cfgsvr2"
+
+  mongo-cluster1-cfgsvr3:
+    image: mongo
+    tty: true
+    volumes:
+      #- mongo-data-cluster1-cfgsvr3:/data
+      - ./:/hostdata
+    entrypoint: 
+      - mongod
+      - --configsvr
+      - --replSet
+      - cluster1cfg
+      - --dbpath
+      - data
+    networks:
+      - backend-network
+    hostname: "mongo-cluster1-cfgsvr3"
+
+networks:
+  backend-network:
+    driver: bridge
+  #frontend-network:
+  #  driver: bridge
+
+
+
+##########  issue command ###########
+#rs.initiate({_id:"s0rs0", members:[{_id:0, host:"mongo001:27017"}] } ) # init primary
+#rs.add("mongo002:27017")
+#rs.add("mongo003:27017")
+
+# or just run in container:mongo init_s0rs0.js in non-arbiter nodes
+# or just run from console:docker-compose exec mongo001 mongo /script/init_s0rs0.js (service name != container name)
+# or just run from console:docker-compose exec mongo004 mongo /script/init_s0rs1.js (service name != container name)
+# init config server: docker-compose exec mongo007 mongo --port 27019 /script/init_s0cfg.js
+# init mongos: mongos --configdb s0cfg/mongo007:27019,mongo008:27019,mongo009:27019 --port 27020
+# sh.addShard("s0rs0/mongo001:27017") # just specify one (in this case : mongo001) of the replica member
+# sh.addShard("s0rs1/mongo004:27017")
+
+  

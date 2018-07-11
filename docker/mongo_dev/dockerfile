@@ -1,0 +1,18 @@
+#FROM ubuntu:14.04
+FROM ubuntu:16.04
+MAINTAINER duyhsieh from mantisa1980@gmail.com
+
+RUN apt-get update && \
+apt-get -y install \
+wget curl checkinstall software-properties-common && \
+apt-transport-https add-apt-repository ppa:maxmind/ppa -y && \
+apt-get update && apt-get install -y python-pip python-dev build-essential python git subversion && \
+apt-get clean
+
+# ADD cannot access global host file;
+#RUN pip install gunicorn gevent==1.1.2 gevent-websocket websocket-client falcon pymongo==2.8 redis \
+#falcon_cors enum34 hash_ring geoip2 simplejson pycrypto requests_oauthlib httpagentparser APNSWrapper \
+#gcm boto boto3 google-api-python-client monthdelta
+
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 && \
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.0.list && apt-get update && apt-get install -y mongodb-org && apt-get clean
