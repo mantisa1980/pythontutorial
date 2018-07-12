@@ -1,1 +1,0 @@
-docker build -t pig-gs -f dockerfile .
