@@ -12,6 +12,9 @@ this is a block comment
 
 while True:
     x = int(input('Please input age number\n'))
+    if x < 0:
+        print("Exit loop")
+        break
     if x < 10:
         print ("Age is {}, you are kid".format(x))
     elif x  < 18:
@@ -23,3 +26,8 @@ while True:
     else:
         print ("Age is {}, you are old man".format(x))
 
+times = 5
+for i in range(0, times):
+    print("times:{}".format(i))
+
+print("Done")
