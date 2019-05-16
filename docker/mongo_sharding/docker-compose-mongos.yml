@@ -1,0 +1,29 @@
+version: '2'
+services:
+  mongo:
+    image: mongo
+    ports: 
+      - "27017:27017"
+    tty: true
+    links:
+      - mongodb001
+      - mongodb002
+      - mongodb003
+      - mongocfg001
+      - mongocfg002
+      - mongocfg003
+    volumes_from:
+      - mongos1-data
+      - mongo_scripts
+    entrypoint:
+      - mongos
+      - --configdb
+      - s1cfg/mongocfg001:27019,mongocfg002:27019,mongocfg003:27019
+      - "--bind_ip"
+      - "0.0.0.0"
+
+  mongos1-data:
+    image: ubuntu
+    volumes:
+      - ~/_docker_/dragon/mongos1-data:/data/db:rw
+

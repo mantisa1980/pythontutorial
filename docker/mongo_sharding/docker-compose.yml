@@ -1,0 +1,144 @@
+version: '2'
+services:
+
+  redis: 
+    image: redis
+    volumes_from:
+      - redis-data
+    ports:
+      - "6379:6379"
+
+ # volumes
+  code: # can be mounted and used as data volume even stopped.
+    image: ubuntu
+    volumes:
+      - ../:/code:rw
+  mongo_scripts:
+    image: ubuntu
+    volumes:
+      - ./mongo_scripts:/mongo_scripts:ro
+  mongo-data:
+    image: ubuntu
+    volumes:
+      - ~/_docker_/dragon/mongo-data:/data/db:rw
+  
+  mongodb001-data:
+    image: ubuntu
+    volumes:
+      - ~/_docker_/dragon/mongodb001-data:/data/db:rw
+  mongodb002-data:
+    image: ubuntu
+    volumes:
+      - ~/_docker_/dragon/mongodb002-data:/data/db:rw
+  mongodb003-data:
+    image: ubuntu
+    volumes:
+      - ~/_docker_/dragon/mongodb003-data:/data/db:rw
+
+  mongocfg001-data:
+    image: ubuntu
+    volumes:
+      - ~/_docker_/dragon/mongocfg001-data:/data/db:rw
+  mongocfg002-data:
+    image: ubuntu
+    volumes:
+      - ~/_docker_/dragon/mongocfg002-data:/data/db:rw
+  mongocfg003-data:
+    image: ubuntu
+    volumes:
+      - ~/_docker_/dragon/mongocfg003-data:/data/db:rw
+  
+  mongos1-data:
+    image: ubuntu
+    volumes:
+      - ~/_docker_/dragon/mongos1-data:/data/db:rw
+
+  redis-data:
+    image: ubuntu
+    volumes:
+      - ~/_docker_/dragon/redis-data:/data:rw
+
+###########################
+
+  mongodb001:
+    image: mongo
+    links:
+      - mongodb002
+      - mongodb003
+    tty: true
+    volumes_from:
+      - mongodb001-data
+      - mongo_scripts
+    entrypoint:
+      - mongod
+      - --replSet
+      - "s1rs1"
+      - "--bind_ip"
+      - "0.0.0.0"
+      - --shardsvr
+  mongodb002:
+    image: mongo
+    tty: true
+    volumes_from:
+      - mongodb002-data
+      - mongo_scripts
+    entrypoint:
+      - mongod
+      - --replSet
+      - "s1rs1"
+      - "--bind_ip"
+      - "0.0.0.0"
+      - --shardsvr
+  mongodb003:
+    image: mongo
+    tty: true
+    volumes_from:
+      - mongodb003-data
+      - mongo_scripts
+    entrypoint:
+      - mongod
+      - --replSet
+      - "s1rs1"
+      - "--bind_ip"
+      - "0.0.0.0"
+      - --shardsvr
+
+  mongocfg001:
+    image: mongo
+    volumes_from:
+      - mongocfg001-data
+      - mongo_scripts
+    tty: true
+    entrypoint:
+      - mongod
+      - --replSet
+      - "s1cfg"
+      - "--bind_ip"
+      - "0.0.0.0"
+      - --configsvr
+  mongocfg002:
+    image: mongo
+    volumes_from:
+      - mongocfg002-data
+      - mongo_scripts
+    tty: true
+    entrypoint:
+      - mongod
+      - --replSet
+      - "s1cfg"
+      - "--bind_ip"
+      - "0.0.0.0"
+      - --configsvr
+  mongocfg003:
+    image: mongo
+    volumes_from:
+      - mongocfg003-data
+      - mongo_scripts
+    tty: true
+    entrypoint:
+      - mongod
+      - --replSet
+      - "s1cfg"
+      - "--bind_ip"
+      - "0.0.0.0"
+      - --configsvr
